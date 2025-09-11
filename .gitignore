@@ -1,0 +1,28 @@
+
+ node\_modules/
+ npm-debug.log
+ # logs
+ logs/
+ \*.log
+
+ # docker
+ \*.env
+ docker-compose.override.yml
+ # os files
+
+ .DS\_Store
+ Thumbs.db
+
+ # ide / editor files
+
+ .vscode/
+ .idea/
+ \*.swp
+
+ # ansible cache
+
+ \*.retry
+
+ # nginx temp files
+
+ /nginx/\*.tmp
