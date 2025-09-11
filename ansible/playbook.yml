@@ -1,0 +1,15 @@
+- name: Configurar infraestructura Node.js + Nginx
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Asegurarse que el directorio de logs existe
+      file:
+        path: /workspace/logs
+        state: directory
+        mode: '0755'
+
+    - name: Copiar archivo de configuración extra si existe
+      copy:
+        src: extra.conf
+        dest: /etc/nginx/conf.d/extra.conf
+      ignore_errors: yes
