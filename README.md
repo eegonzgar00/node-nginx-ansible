@@ -1,65 +1,63 @@
-# Node.js + Nginx + Ansible
+# Angular + Nginx + Ansible en Docker
 
-Este proyecto contiene un contenedor listo para ejecutar Node.js con Nginx y tareas básicas de Ansible. Está pensado para desarrollo, pruebas o enseñanza de automatización.
+Este proyecto muestra cómo desplegar una aplicación **Angular (con Vite)** usando **Nginx** como servidor web, y gestionando la configuración mediante **Ansible** dentro de un único contenedor Docker.  
 
----
-
-
-## Estructura del proyecto
-
-```
-node-nginx-ansible/
-├── Dockerfile              # Contenedor único: Node.js + Nginx + Ansible
-├── docker/
-│   └── app.js              # Servidor Node.js de ejemplo
-├── ansible/
-│   ├── inventory.ini       # Inventario para Ansible
-│   └── playbook.yml        # Playbook de configuración mínima
-└── nginx/
-    └── nginx.conf          # Configuración Nginx como reverse proxy
-```
+Está diseñado para ser muy fácil de descargar, construir y ejecutar en local.
 
 ---
 
-## Pasos para descargar y ejecutar
+## 📥 Descargar el proyecto
 
-### 1️⃣ Descargar el proyecto
-
-Clona o descarga el repositorio:
+Sin necesidad de `git`, descarga el ZIP directamente:
 
 ```bash
-git clone https://github.com/eegonzgar00/node-nginx-ansible.git
-cd node-nginx-ansible
+curl -L https://github.com/eegonzgar00/node-nginx-ansible/archive/refs/heads/main.zip -o node-nginx-ansible.zip
+unzip node-nginx-ansible.zip
+cd rnode-nginx-ansible-main
 ```
 
-O descarga el ZIP y descomprímelo.
+O si prefieres, descárgalo manualmente desde:  
+👉 [Descargar ZIP](https://github.com/eegonzgar00/node-nginx-ansible/archive/refs/heads/main.zip)
 
-### 2️⃣ Construir la imagen Docker
+---
+
+## 🛠️ Construir la imagen Docker
+
+Ejecuta:
 
 ```bash
 docker build -t node-nginx-ansible .
 ```
 
-### 3️⃣ Ejecutar el contenedor
+---
+
+## 🚀 Levantar el contenedor
 
 ```bash
-docker run --rm -it -p 80:80 -p 3000:3000 node-nginx-ansible
+docker run --rm -it -p 80:80 node-nginx-ansible
 ```
-
-* **Puerto 80:** Nginx
-* **Puerto 3000:** Node.js
-
-El contenedor ejecuta automáticamente:
-
-1. Playbook de Ansible
-2. Nginx
-3. Servidor Node.js
-
-### 4️⃣ Acceder a la aplicación
-
-* Node.js: [http://localhost:3000](http://localhost:3000)
-* Nginx: [http://localhost](http://localhost)
 
 ---
 
-✅ Con estos pasos, el proyecto queda descargado, construido y ejecutándose en un solo contenedor de forma funcional.
+## 🌍 Acceder a la aplicación
+
+Una vez desplegado:
+
+- Frontend Angular: [http://localhost](http://localhost)  
+- Nginx actúa como servidor web estático.  
+- Ansible automatiza la configuración (plantilla `nginx.conf.j2`).  
+
+---
+
+## ⚙️ ¿Qué hace Ansible?
+
+El **playbook** (`ansible/playbook.yml`) se encarga de:
+
+1. Instalar Nginx dentro del contenedor.  
+2. Renderizar la configuración de `templates/nginx.conf.j2`.  
+3. Copiar la build de Angular (`dist/`) al directorio de Nginx.  
+4. Arrancar Nginx como servicio.  
+
+---
+
+✅ Con estos pasos podrás **descargar, construir y ejecutar** todo en un único contenedor, sin dependencias externas aparte de Docker.

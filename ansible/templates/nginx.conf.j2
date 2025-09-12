@@ -1,0 +1,13 @@
+server {
+    listen {{ listen_port }};
+    server_name {{ server_name }};
+
+    root {{ root_path }};
+    index index.html;
+
+    location / {
+        try_files $uri /index.html;
+    }
+
+    error_page 404 /index.html;
+}

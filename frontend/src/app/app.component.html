@@ -1,0 +1,21 @@
+<div style="text-align:center; margin: 20px;">
+    <h1>Rick and Morty Characters 🚀</h1>
+
+    <div style="margin: 20px 0;">
+        <label for="search">Buscar personaje:</label>
+        <input
+                id="search"
+                [(ngModel)]="searchTerm"
+                placeholder="Escribe un nombre"
+                style="padding: 5px; width: 200px;"
+        />
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 20px;">
+        <div *ngFor="let c of filteredCharacters" style="border: 1px solid #ccc; padding: 10px; width: 200px; border-radius: 8px;">
+            <img [src]="c.image" [alt]="c.name" style="width: 100%; border-radius: 4px;">
+            <h3>{{ c.name }}</h3>
+            <p>{{ c.species }} - {{ c.status }}</p>
+        </div>
+    </div>
+</div>

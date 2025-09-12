@@ -1,15 +1,45 @@
-- name: Configurar infraestructura Node.js + Nginx
+- name: Deploy Angular + Nginx
   hosts: localhost
-  connection: local
+  become: true
+  vars:
+    listen_port: 80
+    server_name: localhost
+    root_path: /usr/share/nginx/html
   tasks:
-    - name: Asegurarse que el directorio de logs existe
-      file:
-        path: /workspace/logs
-        state: directory
-        mode: '0755'
+    - name: Ensure nginx is installed
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
 
-    - name: Copiar archivo de configuración extra si existe
+    - name: Remove default nginx site
+      file:
+        path: /etc/nginx/conf.d/default.conf
+        state: absent
+
+    - name: Copy frontend compiled to Nginx root
       copy:
-        src: extra.conf
-        dest: /etc/nginx/conf.d/extra.conf
-      ignore_errors: yes
+        src: /app/frontend/dist/frontend/browser/
+        dest: "{{ root_path }}/"
+        owner: www-data
+        group: www-data
+        mode: '0755'
+        remote_src: true
+
+    - name: Deploy nginx site configuration
+      template:
+        src: templates/nginx.conf.j2
+        dest: /etc/nginx/conf.d/default.conf
+        owner: root
+        group: root
+        mode: '0644'
+      notify: restart nginx
+
+    - name: Start nginx in foreground (keep container alive)
+      command: nginx -g 'daemon off;'
+
+  handlers:
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
