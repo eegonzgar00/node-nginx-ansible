@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../auth.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-register',
-  templateUrl: './register.component.html'
+  templateUrl: './register.component.html',
+  standalone: true,
+  imports: [FormsModule]
 })
 export class RegisterComponent {
   username = '';
