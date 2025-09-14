@@ -1,0 +1,14 @@
+[Unit]
+Description=Node.js Backend Service
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/node {{ backend_path }}/server.js
+WorkingDirectory={{ backend_path }}
+Restart=always
+User=www-data
+Environment=PORT=3000
+Environment=DB_PATH={{ backend_path }}/users.db
+
+[Install]
+WantedBy=multi-user.target
