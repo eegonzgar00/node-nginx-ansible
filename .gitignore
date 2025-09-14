@@ -14,7 +14,7 @@
  Thumbs.db
 
  # ide / editor files
-
+backend/node_modules
  .vscode/
  .idea/
  \*.swp
