@@ -34,7 +34,7 @@ docker build -t node-nginx-ansible .
 ## 🚀 Levantar el contenedor
 
 ```bash
-docker run --rm -it -p 80:80 node-nginx-ansible
+docker run --rm -it -p 80:80 -v $(pwd)/data:/data node-nginx-ansible 
 ```
 
 ---
