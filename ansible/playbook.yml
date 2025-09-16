@@ -1,23 +1,31 @@
-- name: Deploy Angular + Nginx
+---
+- name: Deploy Angular + Nginx + Node.js Backend with SQLite
   hosts: localhost
   become: true
   vars:
     listen_port: 80
     server_name: localhost
     root_path: /usr/share/nginx/html
+    backend_path: /opt/backend
+    db_path: /data/users.db
+    ecosystem_file: /opt/backend/ecosystem.config.js
+
   tasks:
-    - name: Ensure nginx is installed
-      apt:
-        name: nginx
+    - name: Ensure pm2 is installed globally
+      npm:
+        name: pm2
+        global: yes
         state: present
-        update_cache: yes
 
-    - name: Remove default nginx site
+    - name: Create persistent directory for database
       file:
-        path: /etc/nginx/conf.d/default.conf
-        state: absent
+        path: /data
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
 
-    - name: Copy frontend compiled to Nginx root
+    - name: Copy Angular build to Nginx root
       copy:
         src: /app/frontend/dist/frontend/browser/
         dest: "{{ root_path }}/"
@@ -26,7 +34,7 @@
         mode: '0755'
         remote_src: true
 
-    - name: Deploy nginx site configuration
+    - name: Deploy nginx configuration
       template:
         src: templates/nginx.conf.j2
         dest: /etc/nginx/conf.d/default.conf
@@ -35,8 +43,38 @@
         mode: '0644'
       notify: restart nginx
 
-    - name: Start nginx in foreground (keep container alive)
-      command: nginx -g 'daemon off;'
+    - name: Copy backend code
+      copy:
+        src: /app/backend/
+        dest: "{{ backend_path }}/"
+        owner: www-data
+        group: www-data
+        mode: '0755'
+        remote_src: true
+
+    - name: Ensure backend database exists
+      command: sqlite3 "{{ db_path }}" "VACUUM;"
+      args:
+        creates: "{{ db_path }}"
+
+    - name: Install backend npm dependencies
+      npm:
+        path: "{{ backend_path }}"
+        production: yes
+
+    - name: Deploy pm2 ecosystem file
+      template:
+        src: templates/ecosystem.config.js.j2
+        dest: "{{ ecosystem_file }}"
+        owner: www-data
+        group: www-data
+        mode: '0644'
+
+    - name: Start apps with pm2
+      command: pm2 start "{{ ecosystem_file }}"
+
+    - name: Save pm2 process list
+      command: pm2 save
 
   handlers:
     - name: restart nginx
